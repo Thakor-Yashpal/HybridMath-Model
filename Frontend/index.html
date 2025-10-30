@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HybridMath Solver</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .solve-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .solve-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .solve-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .clear-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .clear-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .result-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result-section.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .answer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .equation {
+            font-family: 'Courier New', monospace;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            font-size: 20px;
+        }
+
+        .examples {
+            margin-top: 30px;
+        }
+
+        .examples h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .example-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .example-item:hover {
+            background: #e9ecef;
+            border-left-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .status-error {
+            background: #ff4444;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧮 HybridMath Solver</h1>
+            <p>AI-powered math word problem solver</p>
+        </div>
+
+        <div class="content">
+            <div class="input-section">
+                <label for="problem">Enter Math Word Problem:</label>
+                <textarea 
+                    id="problem" 
+                    placeholder="Example: Joan found 70 seashells on the beach. She gave Sam 18 of her seashells. How many seashells does she have now?"
+                ></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="solve-btn" onclick="solveProblem()">
+                    🚀 Solve Problem
+                </button>
+                <button class="clear-btn" onclick="clearAll()">
+                    🗑️ Clear
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px;">Solving...</p>
+            </div>
+
+            <div class="error" id="error"></div>
+
+            <div class="result-section" id="results">
+                <div class="result-item">
+                    <div class="result-label">Answer</div>
+                    <div class="answer" id="answer">-</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Generated Equation</div>
+                    <div class="equation" id="equation">-</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Processing Time</div>
+                    <div class="result-value">⚡ <span id="time">-</span> seconds</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Status</div>
+                    <div id="status">-</div>
+                </div>
+            </div>
+
+            <div class="examples">
+                <h3>💡 Try these examples:</h3>
+                <div class="example-item" onclick="loadExample(0)">
+                    Joan found 70 seashells on the beach. She gave Sam 18 of her seashells. How many seashells does she have now?
+                </div>
+                <div class="example-item" onclick="loadExample(1)">
+                    There are 96 oranges. 17 are rotten. How many good oranges are there?
+                </div>
+                <div class="example-item" onclick="loadExample(2)">
+                    Sara has 31 red and 15 green marbles. Sandy has 12 red marbles. How many red marbles do they have in total?
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000';  // Change to your backend URL
+
+        const examples = [
+            "Joan found 70 seashells on the beach. She gave Sam 18 of her seashells. How many seashells does she have now?",
+            "There are 96 oranges. 17 are rotten. How many good oranges are there?",
+            "Sara has 31 red and 15 green marbles. Sandy has 12 red marbles. How many red marbles do they have in total?"
+        ];
+
+        function loadExample(index) {
+            document.getElementById('problem').value = examples[index];
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('error').classList.remove('show');
+        }
+
+        async function solveProblem() {
+            const problem = document.getElementById('problem').value.trim();
+            
+            if (!problem) {
+                showError('Please enter a math problem');
+                return;
+            }
+
+            // Hide results and error
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('error').classList.remove('show');
+            
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            
+            // Disable button
+            document.querySelector('.solve-btn').disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/solve`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ problem: problem })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    displayResults(data);
+                } else {
+                    showError(data.error || 'Failed to solve problem');
+                }
+            } catch (error) {
+                showError('Failed to connect to backend. Make sure the API is running at ' + API_URL);
+                console.error('Error:', error);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+                document.querySelector('.solve-btn').disabled = false;
+            }
+        }
+
+        function displayResults(data) {
+            document.getElementById('answer').textContent = data.answer;
+            document.getElementById('equation').textContent = data.equation;
+            document.getElementById('time').textContent = data.time_taken.toFixed(3);
+            
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = `<span class="status status-${data.status}">${data.status.toUpperCase()}</span>`;
+            
+            document.getElementById('results').classList.add('show');
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('error');
+            errorEl.textContent = '❌ ' + message;
+            errorEl.classList.add('show');
+        }
+
+        function clearAll() {
+            document.getElementById('problem').value = '';
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('error').classList.remove('show');
+        }
+
+        // Allow Enter key to submit (with Shift+Enter for new line)
+        document.getElementById('problem').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                solveProblem();
+            }
+        });
+    </script>
+</body>
+</html>

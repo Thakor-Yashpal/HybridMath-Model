@@ -3,3 +3,5 @@ transformers
 sympy
 gradio
 datasets
+sentencepiece
+protobuf

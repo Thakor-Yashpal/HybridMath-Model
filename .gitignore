@@ -1,0 +1,74 @@
+# ===========================
+# ⚙️ Python & Virtual Environment
+# ===========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+ENV/
+env/
+*.log
+
+# ===========================
+# 🧠 Model & Checkpoints
+# ===========================
+# Hugging Face / PyTorch / TensorFlow model weights
+BackEnd/hybridmath-final/model.safetensors
+BackEnd/hybridmath-final/pytorch_model.bin
+BackEnd/hybridmath-final/*.bin
+BackEnd/hybridmath-final/*.safetensors
+BackEnd/hybridmath-final/*.pt
+
+# Transformers cache & tokenizer files
+BackEnd/hybridmath-final/rust_model.ot
+BackEnd/hybridmath-final/tokenizer.cache
+BackEnd/hybridmath-final/training_args.bin
+
+# ===========================
+# 🧩 IDE / Editor Files
+# ===========================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ===========================
+# 🧰 OS-Specific Files
+# ===========================
+.DS_Store
+Thumbs.db
+
+# ===========================
+# 🌐 Node / Frontend
+# ===========================
+node_modules/
+Frontend/node_modules/
+Frontend/.next/
+Frontend/dist/
+*.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===========================
+# 🔐 Environment & Configs
+# ===========================
+.env
+*.env
+*.jsonl
+
+# ===========================
+# 🧪 Jupyter & Temp Files
+# ===========================
+.ipynb_checkpoints
+*.ipynb~
+*.checkpoint
+*.tmp
