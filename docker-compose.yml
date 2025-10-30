@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hybridmath-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./BackEnd:/app/BackEnd
+      - ./Model:/app/Model
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    runtime: nvidia
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Frontend.Dockerfile
+    container_name: hybridmath-frontend
+    ports:
+      - "5500:80"
+    depends_on:
+      - backend
+    restart: always
